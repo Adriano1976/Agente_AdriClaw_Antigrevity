@@ -51,7 +51,7 @@ graph TB
     User(["Usuário"])
     Telegram["Telegram Client"]
     System["AdriClaw Engine"]
-    LLM["LLM APIs - Gemini e DeepSeek"]
+    LLM["LLM APIs - Gemini ou DeepSeek"]
     Whisper["Whisper Local - STT"]
     EdgeTTS["Edge-TTS - TTS"]
 

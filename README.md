@@ -46,6 +46,8 @@ O AdriClaw adota um estilo **Monolito Modular com Sistema de Plugins**, garantin
 
 ### Diagrama de Contexto
 
+O Diagrama de Contexto mostra o sistema como um todo e como ele se comunica com o mundo externo — usuário, Telegram, LLMs, Whisper e Edge-TTS.
+
 ```mermaid
 graph TB
     User(["Usuário"])
@@ -66,6 +68,8 @@ graph TB
 ```
 
 ### Diagrama de Componentes
+
+O Diagrama de Componentes abre o sistema por dentro, revelando como suas camadas e módulos estão organizados e interligados.
 
 ```mermaid
 graph TB
@@ -109,6 +113,8 @@ graph TB
 ```
 
 ### Fluxo de Processamento de Mensagem
+
+O Fluxo de Processamento de Mensagem completa a visão mostrando o que acontece, passo a passo, desde o momento em que o usuário envia uma mensagem até receber a resposta. 
 
 ```mermaid
 sequenceDiagram

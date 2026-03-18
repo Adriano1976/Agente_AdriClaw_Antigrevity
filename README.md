@@ -48,50 +48,49 @@ O AdriClaw adota um estilo **Monolito Modular com Sistema de Plugins**, garantin
 
 ```mermaid
 graph TB
-    User(["👤 Usuário"])
-    Telegram["📱 Telegram Client"]
-    System["🤖 Agente"]
-    System["🏗️ AdriClaw Engine"]
-    LLM["🧠 LLM APIs - Gemini e DeepSeek"]
-    Whisper["🎙️ Whisper Local - STT"]
-    EdgeTTS["🔊 Edge-TTS - TTS"]
+    User(["Usuário"])
+    Telegram["Telegram Client"]
+    System["AdriClaw Engine"]
+    LLM["LLM APIs - Gemini e DeepSeek"]
+    Whisper["Whisper Local - STT"]
+    EdgeTTS["Edge-TTS - TTS"]
 
-    User -->|Envia Msg/Voz/Doc| Telegram
-    Telegram -->|Polling/Reply| System
-    System -->|Reply| Telegram
-    Telegram -->|Resposta| User
-    System -->|Prompt| LLM
-    LLM -->|Response| System
-    System -->|Processa Audio| Whisper
-    System -->|Gera Audio| EdgeTTS
+    User -->|"Envia Msg/Voz/Doc"| Telegram
+    Telegram -->|"Polling/Reply"| System
+    System -->|"Reply"| Telegram
+    Telegram -->|"Resposta"| User
+    System -->|"Prompt"| LLM
+    LLM -->|"Response"| System
+    System -->|"Processa Audio"| Whisper
+    System -->|"Gera Audio"| EdgeTTS
 ```
 
 ### Diagrama de Componentes
 
 ```mermaid
 graph TB
-    subgraph "Camada de Interface (Input/Output)"
+    subgraph Interface
         InputH[TelegramInputHandler]
         OutputH[TelegramOutputHandler]
     end
 
-    subgraph "Camada de Controle e Core"
-        Controller[AgentController - Facade]
-        Loop[AgentLoop - ReAct Engine]
-        Registry[Tool/Skill Registry]
+    subgraph Core
+        Controller[AgentController]
+        Loop[AgentLoop ReAct]
+        Registry[ToolSkill Registry]
     end
 
-    subgraph "Camada de Habilidades (Plugins)"
+    subgraph Skills
         SkillL[SkillLoader]
         SkillR[SkillRouter]
         SkillE[SkillExecutor]
     end
 
-    subgraph "Camada de Persistência (Memory)"
-        MemM[MemoryManager - Facade]
+    subgraph Memory
+        MemM[MemoryManager]
         ConvR[ConversationRepository]
         MsgR[MessageRepository]
-        DB[(SQLite - db.sqlite)]
+        DB[(SQLite)]
     end
 
     InputH --> Controller
@@ -400,3 +399,13 @@ Distribuído sob a licença **ISC**. Veja o arquivo `package.json` para detalhes
   <sub>Construído com ❤️ por Adriano · Powered by Gemini & DeepSeek · Interface via Telegram</sub>
 </div>
 <br>
+
+---
+
+<br>
+<div align="center">
+  <p><b><h3> Contagem de visitantes </h3></b></p>  
+  <img src="https://vbr.nathanchung.dev/badge?page_id=Adriano1976/Agente_AdriClaw_Antigrevity" style="height: 30px;" />
+   <br>
+  <img width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=87CEFA&height=120&section=footer"/>
+</div>

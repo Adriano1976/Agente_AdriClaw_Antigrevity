@@ -1,3 +1,5 @@
+<img width="1992" height="559" alt="Capa AdriClaw" src="https://github.com/user-attachments/assets/961d7954-12fd-492f-9cfc-a97a93d99a3f" />
+
 # 🤖 AdriClaw — Agente de IA Pessoal via Telegram
 
 [![Node.js](https://img.shields.io/badge/Node.js-v20%2B-green?logo=node.js)](https://nodejs.org/)

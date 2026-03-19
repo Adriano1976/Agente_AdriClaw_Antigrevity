@@ -408,8 +408,6 @@ Distribuído sob a licença **ISC**. Veja o arquivo `package.json` para detalhes
 </div>
 <br>
 
----
-
 <br>
 <div align="center">
   <p><b><h3> Contagem de visitantes </h3></b></p>  

@@ -401,12 +401,13 @@ Todos os documentos de especificação estão na pasta [`specs/`](./specs/):
 
 Distribuído sob a licença **ISC**. Veja o arquivo `package.json` para detalhes.
 
----
-
+<br>
 <div align="center">
-  <sub>Construído com ❤️ por Adriano · Powered by Gemini & DeepSeek · Interface via Telegram</sub>
+  <sub>Construído por Adriano · Powered by Gemini & DeepSeek · Interface via Telegram</sub>
 </div>
 <br>
+
+---
 
 <br>
 <div align="center">

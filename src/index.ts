@@ -5,7 +5,7 @@ import './tools/index';
 
 async function bootstrap() {
   console.log("Inicializando SandecoClaw/AdriClaw Engine...");
-  
+
   process.on('uncaughtException', (err) => {
     console.error('Fatal Error:', err);
   });

@@ -16,14 +16,25 @@ export class ToolRegistry {
   }
 
   getToolsSchema() {
-    return this.getAllTools().map(t => ({
-      name: t.name,
-      description: t.description,
-      parameters: {
-         type: "OBJECT",
-         properties: t.parameters
+    return this.getAllTools().map(t => {
+      // Avoid double-wrapping if the tool already provides a full schema object
+      if (t.parameters && t.parameters.type === 'object') {
+        return {
+          name: t.name,
+          description: t.description,
+          parameters: t.parameters
+        };
       }
-    }));
+      
+      return {
+        name: t.name,
+        description: t.description,
+        parameters: {
+           type: "object",
+           properties: t.parameters
+        }
+      };
+    });
   }
 }
 export const globalToolRegistry = new ToolRegistry();

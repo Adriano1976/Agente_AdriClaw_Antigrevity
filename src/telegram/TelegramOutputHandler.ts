@@ -1,5 +1,5 @@
 import { Context, InputFile } from 'grammy';
-// @ts-ignore - edge-tts-universal might not have types or is not installed
+// @ts-ignore - edge-tts-universal pode não ter tipos ou não estar instalado
 import { EdgeTTS } from 'edge-tts-universal';
 import fs from 'fs';
 import path from 'path';
@@ -14,7 +14,7 @@ export class TelegramOutputHandler {
             return;
         }
 
-        // Feature G-03: Chunking large responses instead of throwing Bad Request
+        // Funcionalidade G-03: Fragmentando respostas longas em vez de retornar Bad Request
         const isMarkdownPayload = responseText.includes('```markdown') && responseText.includes('# ');
 
         if (isMarkdownPayload) {
@@ -35,7 +35,7 @@ export class TelegramOutputHandler {
 
         while (remainingText.length > 0) {
             let chunk = remainingText.substring(0, MAX_LEN);
-            // Quick heuristic to avoid cutting middle of words if possible
+            // Heurística rápida para evitar cortar o meio das palavras, se possível
             if (remainingText.length > MAX_LEN) {
                 const lastSpace = chunk.lastIndexOf(' ');
                 if (lastSpace > 0) {
@@ -49,7 +49,7 @@ export class TelegramOutputHandler {
             }
 
             await ctx.reply(chunk);
-            // Sleep to avoid 429 Too Many Requests
+            // Aguarda para evitar o erro 429 (Too Many Requests)
             await new Promise(r => setTimeout(r, 500));
         }
     }
@@ -61,7 +61,7 @@ export class TelegramOutputHandler {
         const filename = `Document_${Date.now()}.md`;
         const filepath = path.join(tmpDir, filename);
 
-        // Standard cleanup of markdown wrapper
+        // Limpeza padrão do wrapper markdown
         let cleanText = text.replace(/```markdown\n/g, '').replace(/```\n*$/g, '');
 
         try {
@@ -85,7 +85,7 @@ export class TelegramOutputHandler {
         const filepath = path.join(tmpDir, `Audio_${Date.now()}.ogg`);
 
         try {
-            // Cleanup markdown formatting visually so the bot doesn't speak "hash hash hash"
+            // Limpa visualmente a formatação markdown para que o bot não fale "cerquilha cerquilha cerquilha"
             const plainText = text.replace(/[#*`_~]/g, '');
 
             const tts = new EdgeTTS(plainText, 'pt-BR-ThalitaNeural');

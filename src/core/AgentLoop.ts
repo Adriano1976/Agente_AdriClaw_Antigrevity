@@ -15,7 +15,7 @@ export class AgentLoop {
   ): Promise<string> {
     const provider = ProviderFactory.getProvider(config.DEFAULT_LLM_PROVIDER);
     let iterations = 0;
-    
+
     // Garante que a conversa exista no banco antes de adicionar mensagens
     MemoryManager.getContext(userId, config.DEFAULT_LLM_PROVIDER, conversationId);
 
@@ -23,8 +23,9 @@ export class AgentLoop {
     MemoryManager.appendMessage(conversationId, 'user', userMessage);
 
     const systemPrompt = `
-Você é o SandecoClaw/AdriClaw, um agente pessoal altamente eficiente.
+Você é o AdriClaw, um agente pessoal altamente eficiente.
 Você tem acesso a habilidades dinâmicas. O seu processo exige que você use "thought" (pensamento) para decidir e invocar "tools" (ferramentas) quando necessário, ou apenas responda o usuário final se você já tiver a resposta.
+Sempre responda em formato de texto simples (plain text), sem utilizar formatação markdown (como #, **, etc.), a menos que seja especificamente solicitado pelo usuário.
 
 CONTEXTO DE HABILIDADE ATUAL (SKILL):
 ${skillContext || 'Nenhuma habilidade em especial. Reaja naturalmente ao usuário.'}
@@ -36,19 +37,35 @@ ${skillContext || 'Nenhuma habilidade em especial. Reaja naturalmente ao usuári
 
       // Carrega o escopo da janela de memória atual
       const messagesEnv = MemoryManager.getContext(userId, config.DEFAULT_LLM_PROVIDER, conversationId);
-      
+
       const tools = globalToolRegistry.getToolsSchema();
-      const rawMessages = messagesEnv.map(m => ({ 
-        role: m.role as 'user'|'assistant'|'system'|'tool', 
-        content: m.content 
+      const rawMessages = messagesEnv.map(m => ({
+        role: m.role as 'user' | 'assistant' | 'system' | 'tool',
+        content: m.content
       }));
 
       // Chamo a IA
-      const response = await provider.generate(systemPrompt, rawMessages, tools);
+      let response = await provider.generate(systemPrompt, rawMessages, tools);
 
       if (response.error) {
-        console.error('LLM Error:', response.error);
-        return `Erro interno no LLM: ${response.error}`;
+        // Fallback robust: Se o principal falhar, o Gemini é o melhor segundo plano (tendo crédito)
+        const fallbackProviderName = config.DEFAULT_LLM_PROVIDER.toLowerCase() === 'gemini' ? 'groq' : 'gemini';
+        
+        console.warn(`[AgentLoop] LLM Error com provedor primário (${config.DEFAULT_LLM_PROVIDER}): ${response.error}`);
+        console.warn(`[AgentLoop] Tentando fallback automático para: ${fallbackProviderName}...`);
+        
+        try {
+          const fallbackProvider = ProviderFactory.getProvider(fallbackProviderName);
+          response = await fallbackProvider.generate(systemPrompt, rawMessages, tools);
+          
+          if (response.error) {
+            console.error('[AgentLoop] Erro no LLM Fallback também:', response.error);
+            return `Erro interno no LLM (após fallback): ${response.error}`;
+          }
+        } catch (fallbackError: any) {
+          console.error('[AgentLoop] Falha catastrófica no Fallback:', fallbackError);
+          return `Erro interno no LLM (primário e fallback falharam): ${response.error}`;
+        }
       }
 
       // 1. Caso o LLM tenha de fato respondido um texto pro usuário (Answer)
@@ -61,18 +78,18 @@ ${skillContext || 'Nenhuma habilidade em especial. Reaja naturalmente ao usuári
       if (response.toolCalls && response.toolCalls.length > 0) {
         const call = response.toolCalls[0];
         console.log(`[AgentLoop] Invocando Tool: ${call.name}`);
-        
+
         let observation = '';
         try {
-           const tool = globalToolRegistry.getTool(call.name);
-           if (!tool) throw new Error(`A ferramenta '${call.name}' não existe no registro.`);
-           const result = await tool.execute(call.arguments);
-           observation = typeof result === 'string' ? result : JSON.stringify(result);
+          const tool = globalToolRegistry.getTool(call.name);
+          if (!tool) throw new Error(`A ferramenta '${call.name}' não existe no registro.`);
+          const result = await tool.execute(call.arguments);
+          observation = typeof result === 'string' ? result : JSON.stringify(result);
         } catch (error: any) {
-           observation = `{"error": "${error.message}"}`;
-           console.log(`[AgentLoop] Erro na Tool: ${error.message}`);
+          observation = `{"error": "${error.message}"}`;
+          console.log(`[AgentLoop] Erro na Tool: ${error.message}`);
         }
-        
+
         // Registra o step temporariamente no banco para a IA ler que executou a tarefa
         MemoryManager.appendMessage(conversationId, 'tool', `Resultado de ${call.name}: ${observation}`);
         // O loop var dar a volta para o LLM raciocinar em cima de "tool"

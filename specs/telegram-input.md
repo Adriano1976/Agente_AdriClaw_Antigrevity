@@ -36,6 +36,7 @@ A lib Grammy suporta streaming de arquivos anexos por `getFile()`. O Nodejs lida
 - [ ] G-05: Injetar metadados no Agent Loop quando o input do usuário for originado de um áudio (Voice Note), sugerindo ao LLM ou ao Output Handler que responda em voz (TTS via `pt-BR-ThalitaMultilingualNeural`) na saída, a depender das regras globais do bot.
 
 **Métricas de sucesso:**
+
 | Métrica | Baseline atual | Target | Prazo |
 |---------|---------------|--------|-------|
 | Arquivo Fantasma Residual TMP | Infinito | 0 bytes deixados (PDF, MD e Audio) | Always |
@@ -107,7 +108,7 @@ Pura estrutura Middleware no App Controller sem vizualização fora o Client TG 
 ## 9. Modelo de Dados
 
 Não gera tabela SQLite (Input apenas intermedeia).
-As mensagens se tornam blocos injetados na Memory SQLite com as quebras. 
+As mensagens se tornam blocos injetados na Memory SQLite com as quebras.
 A pasta `/tmp/` retém temporariamente `.pdf`, `.md`, `.mp3`, `.ogg`, etc.
 
 ---
@@ -158,6 +159,7 @@ A estrutura do `AudioHandler` acoplada ao Bot Core ficarão em produção local 
 ---
 
 ## 15. Relatório de Avaliação Final (SDD)
+
 ```text
 ============================================================
   SPEC QUALITY REPORT

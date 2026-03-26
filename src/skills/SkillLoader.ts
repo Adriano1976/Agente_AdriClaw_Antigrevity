@@ -29,7 +29,7 @@ export class SkillLoader {
 
       try {
         const rawContent = fs.readFileSync(mdPath, 'utf8');
-        const match = rawContent.match(/^---\\n([\\s\\S]*?)\\n---\\n([\\s\\S]*)$/m);
+        const match = rawContent.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/m);
         
         let parsedMeta = {};
         let bodyContent = rawContent;

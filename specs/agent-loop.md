@@ -33,6 +33,7 @@ Precisamos desacoplar a parte de grammy/entrada de dados da parte de processamen
 - [ ] G-03: Parar de forma determinística por um hard limit configurável (ex: 5 interações no MAX_ITERATIONS).
 
 **Métricas de sucesso:**
+
 | Métrica | Baseline atual | Target | Prazo |
 |---------|---------------|--------|-------|
 | Completude (Success Rate de ReAct loops) | N/A | 95% encerram antes do teto | Em prod |
@@ -77,6 +78,7 @@ Precisamos desacoplar a parte de grammy/entrada de dados da parte de processamen
 ### 6.3 Fluxos Alternativos
 
 **Fluxo Alternativo A — Max Iterations Reached:**
+
 1. A IA acha que falta informação ou repete tool call incorreto seguidamente.
 2. Contagem do loop alcança o `process.env.MAX_ITERATIONS` (5).
 3. O Loop injeta break forçado.

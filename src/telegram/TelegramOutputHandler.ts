@@ -26,10 +26,11 @@ export class TelegramOutputHandler {
 
     private async handleTextChunking(ctx: Context, text: string) {
         const MAX_LEN = 4000;
-        let remainingText = text;
+        const plainText = text.replace(/[#*`_~\[\]]/g, '');
+        let remainingText = plainText;
 
         if (remainingText.length <= MAX_LEN) {
-            await ctx.reply(remainingText);
+            await ctx.reply(plainText);
             return;
         }
 

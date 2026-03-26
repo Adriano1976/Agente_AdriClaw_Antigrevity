@@ -3,6 +3,31 @@ import { globalToolRegistry } from '../tools/ToolRegistry';
 import { MemoryManager } from '../memory/MemoryManager';
 import { config } from '../config';
 
+// ✅ COLAR ESTE BLOCO INTEIRO ANTES DO "export class AgentLoop":
+
+/**
+ * FIX: Algoritmo de Balanceamento de Chaves para extração segura de JSON.
+ * A LLM frequentemente envolve o JSON em blocos markdown (```json ... ```)
+ * ou adiciona texto antes/depois, quebrando o JSON.parse direto.
+ * Este helper rastreia a abertura da primeira chave { e conta as chaves
+ * internas para identificar o fechamento exato do objeto principal.
+ */
+function extractJsonFromText(text: string): string | null {
+  if (!text.includes('"action"') && !text.includes('"name"')) return null;
+  const startIndex = text.indexOf('{');
+  if (startIndex === -1) return null;
+  let braces = 0;
+  for (let i = startIndex; i < text.length; i++) {
+    if (text[i] === '{') braces++;
+    else if (text[i] === '}') braces--;
+    // Quando a contagem zera, encontramos o objeto completo
+    if (braces === 0) {
+      return text.substring(startIndex, i + 1);
+    }
+  }
+  return null; // JSON incompleto
+}
+
 export class AgentLoop {
   /**
    * Executa a iteração ReAct
@@ -25,7 +50,7 @@ export class AgentLoop {
     const systemPrompt = `
 Você é o AdriClaw, um agente pessoal altamente eficiente.
 Você tem acesso a habilidades dinâmicas. O seu processo exige que você use "thought" (pensamento) para decidir e invocar "tools" (ferramentas) quando necessário, ou apenas responda o usuário final se você já tiver a resposta.
-Sempre responda em formato de texto simples (plain text), sem utilizar formatação markdown (como #, **, etc.), a menos que seja especificamente solicitado pelo usuário.
+Sempre responda em formato de texto simples (plain text), sem utilizar formatação markdown.
 
 CONTEXTO DE HABILIDADE ATUAL (SKILL):
 ${skillContext || 'Nenhuma habilidade em especial. Reaja naturalmente ao usuário.'}
@@ -50,14 +75,14 @@ ${skillContext || 'Nenhuma habilidade em especial. Reaja naturalmente ao usuári
       if (response.error) {
         // Fallback robust: Se o principal falhar, o Gemini é o melhor segundo plano (tendo crédito)
         const fallbackProviderName = config.DEFAULT_LLM_PROVIDER.toLowerCase() === 'gemini' ? 'groq' : 'gemini';
-        
+
         console.warn(`[AgentLoop] LLM Error com provedor primário (${config.DEFAULT_LLM_PROVIDER}): ${response.error}`);
         console.warn(`[AgentLoop] Tentando fallback automático para: ${fallbackProviderName}...`);
-        
+
         try {
           const fallbackProvider = ProviderFactory.getProvider(fallbackProviderName);
           response = await fallbackProvider.generate(systemPrompt, rawMessages, tools);
-          
+
           if (response.error) {
             console.error('[AgentLoop] Erro no LLM Fallback também:', response.error);
             return `Erro interno no LLM (após fallback): ${response.error}`;
@@ -79,11 +104,23 @@ ${skillContext || 'Nenhuma habilidade em especial. Reaja naturalmente ao usuári
         const call = response.toolCalls[0];
         console.log(`[AgentLoop] Invocando Tool: ${call.name}`);
 
+        // ✅ ADICIONAR NO LUGAR:
         let observation = '';
         try {
           const tool = globalToolRegistry.getTool(call.name);
           if (!tool) throw new Error(`A ferramenta '${call.name}' não existe no registro.`);
-          const result = await tool.execute(call.arguments);
+
+          // FIX: Se arguments for string (JSON bruto da LLM com markdown/ruído),
+          // usa o extrator seguro antes de parsear
+          let args = call.arguments;
+          if (typeof args === 'string') {
+            const cleaned = extractJsonFromText(args);
+            if (cleaned) {
+              try { args = JSON.parse(cleaned); } catch { /* mantém como string */ }
+            }
+          }
+
+          const result = await tool.execute(args);
           observation = typeof result === 'string' ? result : JSON.stringify(result);
         } catch (error: any) {
           observation = `{"error": "${error.message}"}`;

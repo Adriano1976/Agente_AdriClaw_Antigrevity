@@ -6,7 +6,11 @@ import path from 'path';
 import https from 'https';
 import { exec } from 'child_process';
 import { promisify } from 'util';
-import pdfParse from 'pdf-parse';
+
+// ✅ ADICIONAR NO LUGAR:
+// FIX: pdf-parse é CJS puro — o import ESM via tsx corrompe o export principal.
+// Não importamos aqui. Usamos eval('require') no ponto de uso para bypassar o compilador.
+// import pdfParse from 'pdf-parse';
 
 const execAsync = promisify(exec);
 
@@ -97,11 +101,29 @@ bot.on('message:document', async (ctx) => {
         let parsedText = '';
         if (filename.endsWith('.md')) {
             parsedText = fs.readFileSync(tmpPath, 'utf8');
+            // ✅ ADICIONAR NO LUGAR:
         } else if (mime === 'application/pdf') {
+            // FIX DEFINITIVO ESM/CJS: Escondendo o require do compilador TSX.
+            // O TypeScript ignora o conteúdo de eval estaticamente, e o Node.js
+            // executa em runtime puxando a função CJS intacta sem corrupção do .default
+            const pdfParseRaw = eval('require')('pdf-parse');
             const dataBuffer = fs.readFileSync(tmpPath);
-            // @ts-ignore - TS types mismatch for pdf-parse commonjs export
-            const data = await pdfParse(dataBuffer);
-            parsedText = data.text;
+            const PDFParseClass = pdfParseRaw.PDFParse || pdfParseRaw.default?.PDFParse;
+            
+            if (PDFParseClass) {
+                // Nova versão do pdf-parse (v2.4.5+)
+                const parser = new PDFParseClass({ data: dataBuffer });
+                const data = await parser.getText();
+                parsedText = data.text;
+                if (typeof parser.destroy === 'function') {
+                    await parser.destroy();
+                }
+            } else {
+                // Versão antiga (v1.1.1)
+                const pdfParse = pdfParseRaw.default || pdfParseRaw;
+                const data = await pdfParse(dataBuffer);
+                parsedText = data.text;
+            }
         }
 
         const caption = ctx.message.caption || '';
@@ -147,13 +169,17 @@ bot.on(['message:voice', 'message:audio'], async (ctx) => {
 
         // Supondo que o Whisper CLI esteja instalado. --language pt pode ser adicionado.
         // Usamos o model tiny ou base dependendo da spec de desempenho local.
-        const { stdout, stderr } = await execAsync(`whisper "${tmpPath}" --model tiny --language pt --output_format txt --output_dir tmp/`);
+        const { stdout, stderr } = await execAsync(`python -m whisper "${tmpPath}" --model base --language pt --output_format txt --output_dir tmp/`);
 
         // Ler o TXT gerado
         const txtPath = path.resolve(process.cwd(), `tmp/audio_${audio.file_id}.txt`);
 
         if (!fs.existsSync(txtPath)) {
-            throw new Error("Transcriber falhou silenciosamente.");
+            const hasFfmpegError = stderr.includes('FileNotFoundError') || stderr.includes('ffmpeg');
+            if (hasFfmpegError) {
+                throw new Error("FFMPEG_MISSING");
+            }
+            throw new Error("Transcriber falhou silenciosamente. STDERR: " + stderr);
         }
 
         const transcript = fs.readFileSync(txtPath, 'utf8').trim();
@@ -169,11 +195,21 @@ bot.on(['message:voice', 'message:audio'], async (ctx) => {
         console.log(`[Telegram] STT Transcrito: "${transcript}"`);
 
         // Injeta na memoria setando REQUIRES_AUDIO_REPLY = true (G-05 / RF-06)
-        await AgentController.handleMessage(ctx, userId, transcript, true);
+        // Adicionamos um prefixo para o AgentLoop saber que isso veio de uma transcrição e pode conter ruidos.
+        const enrichedText = `[Transcrição de voz]: ${transcript}`;
+        await AgentController.handleMessage(ctx, userId, enrichedText, true);
 
     } catch (err: any) {
         console.error("[TelegramInput] Falha ao processar áudio:", err);
-        await ctx.reply(`⚠️ Falha ao processar o áudio: arquivo grande demais ou falha no serviço STT.`); // EC-02
+        
+        let errorMessage = `⚠️ Falha ao processar o áudio: arquivo grande demais ou falha no serviço STT.`;
+        if (err.message === "FFMPEG_MISSING") {
+            errorMessage = `⚠️ Falha no processamento de áudio: O 'FFmpeg' não está instalado no seu Windows ou não está no PATH. O Whisper precisa dele para ler áudios. Por favor, instale o FFmpeg (ex: 'winget install ffmpeg').`;
+        } else if (err.message && (err.message.includes("'whisper'") || err.message.includes("is not recognized") || err.message.includes("não é reconhecido"))) {
+             errorMessage = `⚠️ O comando 'whisper' não foi encontrado no servidor local. Por favor, instale-o executando: 'pip install openai-whisper setuptools-rust' e garanta que o FFmpeg esteja acessível no PATH.`;
+        }
+        
+        await ctx.reply(errorMessage); // EC-02
     } finally {
         if (fs.existsSync(tmpPath)) {
             fs.unlinkSync(tmpPath); // RF-03

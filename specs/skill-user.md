@@ -19,7 +19,7 @@ A arquitetura de injeção de habilidades (`Skills`) possibilita que novas capac
 Adicionar habilidades num chatbot em nível de código causa quebras de estabilidade, misturas no "Core" Principal e requer reboot do backend Node a cada alteração pequena na string de inteligência.
 
 **Evidências:**
-Se o LLM receber instruções enormes fixas no seu Master Prompt, além de "queimar dinheiro" com a Context Window cheia em conversas bobas (ex: "Oi"), ele sofre de perda de atenção nas diretivas essenciais. 
+Se o LLM receber instruções enormes fixas no seu Master Prompt, além de "queimar dinheiro" com a Context Window cheia em conversas bobas (ex: "Oi"), ele sofre de perda de atenção nas diretivas essenciais.
 
 **Por que agora:**
 A separação num formato plugin (pasta .agents) modulariza tudo e deixa o Router LLM usar um prompt barato para dizer "Sim, devo focar a Skill de Github" só quando o usuário pedir pra ver repósitorios.
@@ -33,6 +33,7 @@ A separação num formato plugin (pasta .agents) modulariza tudo e deixa o Route
 - [ ] G-03: Inserir a documentação detalhada da Skill no Master Context apenas durante a iteração daquele comando isolado (Runtime Injection).
 
 **Métricas de sucesso:**
+
 | Métrica | Baseline atual | Target | Prazo |
 |---------|---------------|--------|-------|
 | Tempos Re-escrita Hot Reload | Reboot forçado | 1ms por chamada (FS lendo síncrono subpastas) | Constante |

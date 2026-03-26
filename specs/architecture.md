@@ -32,10 +32,12 @@ A arquitetura segue um fluxo de pipeline onde as mensagens do Telegram são capt
 ## 2.3 Estilo Arquitetural
 
 O sistema adota um estilo **Monolito Modular com Sistema de Plugins**.  
+
 - **Monolito Modular:** Facilita o desenvolvimento e deploy local sem a complexidade de microsserviços.
 - **Plugin-based (Skills):** Permite que novas funcionalidades sejam adicionadas ou atualizadas via "Hot-Reload" apenas manipulando diretórios na pasta `.agents/skills`, sem reiniciar o processo principal.
 
 **Trade-offs:**  
+
 - **Vantagem:** Baixa latência interna, facilidade de manutenção para um único desenvolvedor, alta coesão.
 - **Desvantagem:** Escalabilidade vertical limitada ao hardware do host local (não é um problema para o caso de uso de agente pessoal).
 
@@ -126,18 +128,19 @@ Este tópico centraliza as definições de stack. **Alterações aqui devem refl
 
 Para manter a alta coesão e baixo acoplamento, os seguintes padrões são aplicados:
 
-1.  **Facade:** Utilizado no `AgentController` e `MemoryManager` para simplificar a interface com subsistemas complexos.
-2.  **Factory:** `ProviderFactory` para instanciar diferentes provedores de LLM e `ToolFactory` para as ferramentas.
-3.  **Repository:** Para abstrair o acesso ao banco de dados SQLite (`ConversationRepository`, `MessageRepository`).
-4.  **Singleton:** Garantir instância única da conexão com o banco de dados.
-5.  **Strategy:** No `TelegramOutputHandler` para decidir entre enviar texto puro, chunks ou arquivos.
-6.  **Registry:** No sistema de Skills e Tools para registro dinâmico de capacidades.
+1. **Facade:** Utilizado no `AgentController` e `MemoryManager` para simplificar a interface com subsistemas complexos.
+2. **Factory:** `ProviderFactory` para instanciar diferentes provedores de LLM e `ToolFactory` para as ferramentas.
+3. **Repository:** Para abstrair o acesso ao banco de dados SQLite (`ConversationRepository`, `MessageRepository`).
+4. **Singleton:** Garantir instância única da conexão com o banco de dados.
+5. **Strategy:** No `TelegramOutputHandler` para decidir entre enviar texto puro, chunks ou arquivos.
+6. **Registry:** No sistema de Skills e Tools para registro dinâmico de capacidades.
 
 ---
 
 ## 2.8 Fluxos Críticos (Sequence Diagram)
 
 ### Fluxo de Processamento de Mensagem
+
 ```mermaid
 sequenceDiagram
     participant U as Usuário (Telegram)
@@ -170,9 +173,9 @@ sequenceDiagram
 - **Ambiente:** Execução direta no Windows via Terminal.
 - **Process Management:** `npm run dev` (utilizando nodemon para hot-reload do core).
 - **Diretórios de Dados:**
-    - `./data/`: Banco de dados SQLite (`.db`).
-    - `./tmp/`: Arquivos temporários (PDFs/Áudios) deletados após uso.
-    - `.agents/skills/`: Plugins de habilidades em Markdown.
+  - `./data/`: Banco de dados SQLite (`.db`).
+  - `./tmp/`: Arquivos temporários (PDFs/Áudios) deletados após uso.
+  - `.agents/skills/`: Plugins de habilidades em Markdown.
 
 ---
 

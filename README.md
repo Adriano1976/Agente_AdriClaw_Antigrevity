@@ -16,7 +16,8 @@
 
 - 💬 **Interface via Telegram** — Toda interação acontece por DM no Telegram. Sem UI web.
 - 🧠 **Motor ReAct (Reasoning + Acting)** — Loop de raciocínio iterativo com suporte a chamada de ferramentas (Tool Calls).
-- 🔄 **Multi-LLM Dinâmico** — Troca de provedores de IA (Gemini, DeepSeek) via configuração, sem reiniciar o sistema.
+- 🔄 **Multi-LLM Dinâmico** — Troca de provedores de IA (Gemini, DeepSeek, Groq) via configuração.
+- 🛡️ **Fallback de LLM** — Mecanismo automático de comutação para Gemini caso o provedor primário falhe, garantindo disponibilidade.
 - 🔌 **Skills por Hot-Reload** — Adicione ou atualize habilidades apenas colocando arquivos `.md` na pasta `.agents/skills/`, sem reiniciar o processo.
 - 📄 **Entradas Multimodais** — Aceita texto, arquivos PDF, Markdown e mensagens de voz (transcritas localmente via Whisper).
 - 🔊 **Respostas em Áudio (TTS)** — Responde em voz com `pt-BR-ThalitaMultilingualNeural` via Edge-TTS quando solicitado.
@@ -35,7 +36,7 @@
 | **Banco de Dados** | SQLite (`better-sqlite3`) | `^12.8.0` |
 | **Parsing de PDF** | pdf-parse | `^2.4.5` |
 | **Parsing de YAML** | js-yaml | `^4.1.1` |
-| **LLMs Suportados** | Google Gemini, DeepSeek | via API |
+| **LLMs Suportados** | Gemini, DeepSeek, Groq | via API |
 | **STT (Voz para Texto)** | Whisper Local | — |
 | **TTS (Texto para Voz)** | Microsoft Edge-TTS | `pt-BR-ThalitaMultilingualNeural` |
 | **Paradigma** | Orientação a Objetos + Design Patterns | — |
@@ -55,7 +56,7 @@ graph TB
     User(["Usuário"])
     Telegram["Telegram Client"]
     System["AdriClaw Engine"]
-    LLM["LLM APIs - Gemini ou DeepSeek"]
+    LLM["LLM APIs - Gemini, DeepSeek ou Groq"]
     Whisper["Whisper Local - STT"]
     EdgeTTS["Edge-TTS - TTS"]
 
@@ -116,7 +117,7 @@ graph TB
 
 ### Fluxo de Processamento de Mensagem
 
-O Fluxo de Processamento de Mensagem completa a visão mostrando o que acontece, passo a passo, desde o momento em que o usuário envia uma mensagem até receber a resposta. 
+O Fluxo de Processamento de Mensagem completa a visão mostrando o que acontece, passo a passo, desde o momento em que o usuário envia uma mensagem até receber a resposta.
 
 ```mermaid
 sequenceDiagram
@@ -195,10 +196,11 @@ sequenceDiagram
    TELEGRAM_BOT_TOKEN=seu_token_aqui
    TELEGRAM_ALLOWED_USER_IDS=123456789,987654321
 
-   # LLM Provider (gemini | deepseek)
+   # LLM Provider (gemini | deepseek | groq)
    LLM_PROVIDER=gemini
    GEMINI_API_KEY=sua_chave_gemini
    DEEPSEEK_API_KEY=sua_chave_deepseek
+   GROQ_API_KEY=sua_chave_groq
 
    # Agent Config
    MAX_ITERATIONS=5
@@ -323,6 +325,7 @@ Os provedores são intercambiáveis via variável de ambiente `LLM_PROVIDER`. O 
 |---|---|---|
 | Google Gemini | `GEMINI_API_KEY` | ✅ Suportado |
 | DeepSeek | `DEEPSEEK_API_KEY` | ✅ Suportado |
+| Groq | `GROQ_API_KEY` | ✅ Suportado (Auto-fix JSON Schema) |
 
 ---
 

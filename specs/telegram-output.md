@@ -34,6 +34,7 @@ A padronização das outputs de Skills requer renderizar os "arquivos" processad
 - [ ] G-04: Prover `AudioOutputStrategy` para sintetizar texto em voz (TTS) via Microsoft Edge TTS quando a flag de áudio for detectada no Pipeline.
 
 **Métricas de sucesso:**
+
 | Métrica | Baseline atual | Target | Prazo |
 |---------|---------------|--------|-------|
 | Payload de API Error (4096 bytes ext.) | Alto Risco | 0 Crash de Length | MVP |

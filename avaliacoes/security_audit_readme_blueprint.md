@@ -48,6 +48,7 @@ A skill `readme-blueprint-generator` foi auditada com foco em identificar riscos
 | **Linha(s)**  | 10-17                         |
 
 **Evidência** (trecho exato do arquivo):
+
 ```markdown
 10. 1. Scan all the files in the .github/copilot folder, like:
 11.    - Architecture

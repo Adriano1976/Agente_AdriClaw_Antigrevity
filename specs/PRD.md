@@ -35,6 +35,7 @@ A ascensão de LLMs super eficientes (Gemini 1.5/2.0+ e DeepSeek) somada com a f
 - [ ] G-04: Respeitar limites rigorosos de autorização via user ID (whitelist).
 
 **Métricas de sucesso:**
+
 | Métrica | Baseline atual | Target | Prazo |
 |---------|---------------|--------|-------|
 | Uptime local da API de bot | 0% | 99% após testes | 30 dias |
@@ -84,6 +85,7 @@ O usuário envia um chat no Telegram, o SandecoClaw roda local em background num
 ### 6.3 Fluxos Alternativos
 
 **Fluxo Alternativo A — Falha de API de LLM:**
+
 1. LLM primário (ex: gemini) sobrecarregado (503).
 2. O AgentLoop tenta fallback para outro config ou falha graciosamente enviando aviso pro Telegram em vez de quebrar a Promise da main engine.
 
@@ -103,6 +105,7 @@ O usuário envia um chat no Telegram, o SandecoClaw roda local em background num
 **Componentes afetados:** Terminal log-output, e Chats do aplicativo Telegram do usuário Whitelisted.
 
 **Estados da UI (No Telegram):**
+
 - Estado de processamento: O bot sinaliza ação de digitação contínua via Chat Action do telegram até a requisição real de envio ser efetuada.
 
 ---
@@ -162,6 +165,3 @@ messages {
 ---
 
 ## 14. Open Questions
-
-
-

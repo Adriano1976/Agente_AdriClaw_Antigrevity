@@ -23,7 +23,7 @@ Sem armazenamento persistente, o robô perde a utilidade primária de um "Agente
 Tentativas de armazenar arrays in-memory no Node.js funcionam apenas até o app ser encerrado/reiniciado (hot-reload da infra ou npm dev reload). O histórico vaporizava.
 
 **Por que agora:**
-A adoção do SQLite é veloz, serverless (um arquivo físico único), suporta chamadas síncronas rápidas (bloqueios impercetiveis para volumes unicos de acesso Telegram) e não consome infra adicional. 
+A adoção do SQLite é veloz, serverless (um arquivo físico único), suporta chamadas síncronas rápidas (bloqueios impercetiveis para volumes unicos de acesso Telegram) e não consome infra adicional.
 
 ---
 
@@ -34,6 +34,7 @@ A adoção do SQLite é veloz, serverless (um arquivo físico único), suporta c
 - [ ] G-03: Ranquear requisições de SQLite usando Repository Pattern, desacoplando SQL views puro do Agent Loop principal.
 
 **Métricas de sucesso:**
+
 | Métrica | Baseline atual | Target | Prazo |
 |---------|---------------|--------|-------|
 | Tempo de Write Sync | N/A | < 10ms | Constante |
@@ -44,13 +45,14 @@ A adoção do SQLite é veloz, serverless (um arquivo físico único), suporta c
 ## 4. Non-Goals (Fora do Escopo)
 
 - NG-01: Não criará banco distribuído de Grafos ou Chroma Vector Database. A intenção é ter memória conversacional direta, sem Sematic Search Complexo inicialmente.
-- NG-02: ORMs como Prisma, TypeORM etc. Usaremos SQL nativo `better-sqlite3` por leveza e clareza. 
+- NG-02: ORMs como Prisma, TypeORM etc. Usaremos SQL nativo `better-sqlite3` por leveza e clareza.
 
 ---
 
 ## 5. Usuários e Personas
 
-**Módulos primários:** 
+**Módulos primários:**
+
 - O arquivo `DocumentHandler` (grava input principal).
 - A Classe `TelegramBot` via `AgentLoop` (lê e grava answers).
 - A Ferramenta Genérica de Sistema (apenas lê seu próprio histórico pra sumarização futura).

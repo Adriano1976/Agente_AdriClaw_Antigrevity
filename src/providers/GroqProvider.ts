@@ -17,12 +17,18 @@ export class GroqProvider implements ILlmProvider {
     availableTools: any[]
   ): Promise<LlmResponse> {
     try {
+      // FIX: A Groq exige 'tool_call_id' em mensagens role:'tool', mas o
+      // MemoryManager armazena resultados de ferramentas sem esse campo.
+      // Convertemos role:'tool' para role:'user' com prefixo de contexto,
+      // mantendo a informação acessível para a LLM raciocinar.
       const groqMessages: any[] = [
         { role: 'system', content: systemPrompt },
-        ...messages.map(m => ({
-          role: m.role,
-          content: m.content
-        }))
+        ...messages.map(m => {
+          if (m.role === 'tool') {
+            return { role: 'user', content: `[Observação de Ferramenta]: ${m.content}` };
+          }
+          return { role: m.role, content: m.content };
+        })
       ];
 
       const toolsConfig = availableTools && availableTools.length > 0 
@@ -37,13 +43,12 @@ export class GroqProvider implements ILlmProvider {
         : undefined;
 
       const payload: any = {
-        model: "openai/gpt-oss-120b",
+        model: "llama-3.3-70b-versatile",
         messages: groqMessages,
         temperature: 1,
         max_completion_tokens: 8192,
         top_p: 1,
         stream: true,
-        reasoning_effort: "medium",
         stop: null
       };
 

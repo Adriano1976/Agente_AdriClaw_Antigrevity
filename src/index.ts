@@ -1,4 +1,7 @@
-import { bot } from './telegram/TelegramInputHandler';
+import { Logger } from './core/Logger';
+Logger.init(); // Ativa logs automáticos em arquivos na pasta /logs
+
+import { bot } from './telegram/TelegramInputHandler'; 
 
 // Tools bootsrapping
 import './tools/index';

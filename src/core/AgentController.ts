@@ -38,19 +38,19 @@ export class AgentController {
     if (requiresAudio) {
       console.log(`[Output] Preparando TTS (Thalita) para a resposta...`);
       // Mock: Avisa o user que mandaria áudio
-      text = `[🎙️ Áudio TTS Thalita gerado localmente]:\n` + text;
+      text = `🎙️ Áudio gerado localmente:\n` + text;
     }
 
-    // RNF-01: Delay do telegram + limits (Split messages > 4000 chars)
+    const plainText = text.replace(/[#*`_~\[\]]/g, '');
     const MAX_LEN = 4000;
-    if (text.length <= MAX_LEN) {
-      await ctx.reply(text);
+    if (plainText.length <= MAX_LEN) {
+      await ctx.reply(plainText);
       return;
     }
 
     // Split primitivo
-    for (let i = 0; i < text.length; i += MAX_LEN) {
-      await ctx.reply(text.substring(i, i + MAX_LEN));
+    for (let i = 0; i < plainText.length; i += MAX_LEN) {
+      await ctx.reply(plainText.substring(i, i + MAX_LEN));
     }
   }
 }

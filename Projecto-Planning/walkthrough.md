@@ -12,7 +12,7 @@ Foram feitas todas as integrações fundamentais propostas nas especificações,
   * Tabela `conversations` e `messages`.
   * Camada [MemoryManager](file:///c:/Users/Neide%20Ferreira/3D%20Objects/AdriClaw/src/memory/MemoryManager.ts#5-26) criada para controlar a janela limpa (`MEMORY_WINDOW_SIZE`) ao mandar histórico no agent loop.
 * **Provedor Principal (LLM)**: O [ProviderFactory](file:///c:/Users/Neide%20Ferreira/3D%20Objects/AdriClaw/src/providers/ProviderFactory.ts#4-17) pode resolver a ponte do provedor, atualmente implementado com fetch nativo na API Rest v1beta do [Gemini](file:///c:/Users/Neide%20Ferreira/3D%20Objects/AdriClaw/src/providers/GeminiProvider.ts#8-67).
-* **Hot-Reload de Skills ([SkillLoader](file:///c:/Users/Neide%20Ferreira/3D%20Objects/AdriClaw/src/skills/SkillLoader.ts#12-56) & [SkillRouter](file:///c:/Users/Neide%20Ferreira/3D%20Objects/AdriClaw/src/skills/SkillRouter.ts#5-42))**: 
+* **Hot-Reload de Skills ([SkillLoader](file:///c:/Users/Neide%20Ferreira/3D%20Objects/AdriClaw/src/skills/SkillLoader.ts#12-56) & [SkillRouter](file:///c:/Users/Neide%20Ferreira/3D%20Objects/AdriClaw/src/skills/SkillRouter.ts#5-42))**:
   * O [SkillLoader](file:///c:/Users/Neide%20Ferreira/3D%20Objects/AdriClaw/src/skills/SkillLoader.ts#12-56) vasculha em runtime absoluto a pasta oculta `.agents/skills` sem crashar a aplicação.
   * Cria uma skill mock `analista`.
   * `SkillRouter` está embutido usando prompt focado em extrair "Zero Shot" classification num formato JSON limpo.
@@ -29,7 +29,9 @@ Para que o agente SandecoClaw ligue com sucesso localmente, os seguintes passos 
 5. Execute `npx tsc` (ou `npm run build` após criar o script) se mexer no código, ou inicie a ferramenta via:
 \`\`\`bash
 npm run dev
+
 # ou
+
 npx tsx src/index.ts
 \`\`\`
 

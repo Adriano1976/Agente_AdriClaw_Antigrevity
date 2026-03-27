@@ -31,19 +31,20 @@ export class GroqProvider implements ILlmProvider {
         })
       ];
 
-      const toolsConfig = availableTools && availableTools.length > 0 
+      const toolsConfig = availableTools && availableTools.length > 0
         ? availableTools.map(t => ({
-            type: 'function',
-            function: {
-              name: t.name,
-              description: t.description,
-              parameters: t.parameters
-            }
-          }))
+          type: 'function',
+          function: {
+            name: t.name,
+            description: t.description,
+            parameters: t.parameters
+          }
+        }))
         : undefined;
 
+      //✅ Modificar o modelo aqui:
       const payload: any = {
-        model: "llama-3.3-70b-versatile",
+        model: "openai/gpt-oss-20b",
         messages: groqMessages,
         temperature: 1,
         max_completion_tokens: 8192,
@@ -77,10 +78,10 @@ export class GroqProvider implements ILlmProvider {
         if (toolCallsDelta) {
           for (const tc of toolCallsDelta) {
             if (!toolCallsMap.has(tc.index)) {
-              toolCallsMap.set(tc.index, { 
-                id: tc.id, 
-                name: tc.function?.name || '', 
-                arguments: tc.function?.arguments || '' 
+              toolCallsMap.set(tc.index, {
+                id: tc.id,
+                name: tc.function?.name || '',
+                arguments: tc.function?.arguments || ''
               });
             } else {
               const existing = toolCallsMap.get(tc.index);
@@ -102,7 +103,7 @@ export class GroqProvider implements ILlmProvider {
           name: tc.name, // The tool parser shouldn't strictly require full parsing immediately, but let's parse args
           arguments: tc.arguments ? JSON.parse(tc.arguments) : {}
         }));
-        
+
         return { content: fullContent.length > 0 ? fullContent : null, toolCalls };
       }
 

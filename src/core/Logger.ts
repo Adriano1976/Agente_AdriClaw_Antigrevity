@@ -30,7 +30,6 @@ export class Logger {
       const sensitiveKeys = [
         config.TELEGRAM_BOT_TOKEN,
         config.GEMINI_API_KEY,
-        config.DEEPSEEK_API_KEY,
         config.GROQ_API_KEY
       ].filter(k => k && k.length > 5); // Apenas chaves reais
 
@@ -44,7 +43,7 @@ export class Logger {
         // Encontra o nome do usuário no final do caminho do home
         const userName = path.basename(homePath);
         if (userName.length > 2) {
-           redacted = redacted.split(userName).join('USER_REDACTED');
+          redacted = redacted.split(userName).join('USER_REDACTED');
         }
       }
 
@@ -69,7 +68,7 @@ export class Logger {
 
     const writeToLogFile = (type: 'LOG' | 'WARN' | 'ERROR', args: any[]) => {
       // ⚠️ Segurança: Console Normal (LOG) NÃO é salvo em arquivo por privacidade.
-      if (type === 'LOG') return; 
+      if (type === 'LOG') return;
 
       const timestamp = new Date().toLocaleString('pt-BR');
       const msg = formatMsg(args);

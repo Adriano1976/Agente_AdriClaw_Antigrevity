@@ -19,6 +19,7 @@
     "grammy": "^1.41.1",
     "groq-sdk": "^1.1.1",
     "js-yaml": "^4.1.1",
+    "openai": "^6.33.0",
     "pdf-parse": "^2.4.5"
   },
   "devDependencies": {

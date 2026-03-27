@@ -48,7 +48,7 @@ export class AgentLoop {
     MemoryManager.appendMessage(conversationId, 'user', userMessage);
 
     const systemPrompt = `
-Você é o AdriClaw, um agente pessoal altamente eficiente.
+Quando iniciar a interação, você deve se apresentar como AdriClaw, um agente pessoal altamente eficiente.
 Você tem acesso a habilidades dinâmicas. O seu processo exige que você use "thought" (pensamento) para decidir e invocar "tools" (ferramentas) quando necessário, ou apenas responda o usuário final se você já tiver a resposta.
 Sempre responda em formato de texto simples (plain text), sem utilizar formatação markdown.
 
@@ -73,24 +73,8 @@ ${skillContext || 'Nenhuma habilidade em especial. Reaja naturalmente ao usuári
       let response = await provider.generate(systemPrompt, rawMessages, tools);
 
       if (response.error) {
-        // Fallback robust: Se o principal falhar, o Gemini é o melhor segundo plano (tendo crédito)
-        const fallbackProviderName = config.DEFAULT_LLM_PROVIDER.toLowerCase() === 'gemini' ? 'groq' : 'gemini';
-
-        console.warn(`[AgentLoop] LLM Error com provedor primário (${config.DEFAULT_LLM_PROVIDER}): ${response.error}`);
-        console.warn(`[AgentLoop] Tentando fallback automático para: ${fallbackProviderName}...`);
-
-        try {
-          const fallbackProvider = ProviderFactory.getProvider(fallbackProviderName);
-          response = await fallbackProvider.generate(systemPrompt, rawMessages, tools);
-
-          if (response.error) {
-            console.error('[AgentLoop] Erro no LLM Fallback também:', response.error);
-            return `Erro interno no LLM (após fallback): ${response.error}`;
-          }
-        } catch (fallbackError: any) {
-          console.error('[AgentLoop] Falha catastrófica no Fallback:', fallbackError);
-          return `Erro interno no LLM (primário e fallback falharam): ${response.error}`;
-        }
+        console.error(`[AgentLoop] Erro no LLM (${config.DEFAULT_LLM_PROVIDER}): ${response.error}`);
+        return `Erro interno no LLM: ${response.error}`;
       }
 
       // 1. Caso o LLM tenha de fato respondido um texto pro usuário (Answer)

@@ -8,7 +8,9 @@ description: Cria uma seção de "Skills" (Habilidades) para currículos profiss
 Esta skill processa um currículo (e o contexto profissional) do usuário para gerar uma seção de **Habilidades** (Skills) altamente estratégica e atrativa para recrutadores, focada em resultados e clareza.
 
 ## Regras de Geração
+
 Ao receber um currículo ou solicitação de criação de skills, siga ESTRITAMENTE estas regras:
+
 1. **10 Segundos**: Recrutadores analisam um currículo muito rápido. As habilidades devem ser lidas e compreendidas instantaneamente.
 2. **Relevância**: Filtre e destaque apenas as habilidades que são mais relevantes para a vaga que o profissional deseja.
 3. **Clareza e Simplicidade**: Use linguagem profissional, direta e sem jargões desnecessários, a menos que sejam palavras-chave da área.
@@ -23,7 +25,9 @@ Ao receber um currículo ou solicitação de criação de skills, siga ESTRITAME
    - Ferramentas e tecnologias
 
 ## Contexto do Profissional
+
 O usuário deve fornecer os seguintes pontos (se algo faltar, deduza do currículo ou questione o usuário se estritamente necessário):
+
 - Área profissional
 - Cargo desejado
 - Experiência profissional
@@ -32,6 +36,7 @@ O usuário deve fornecer os seguintes pontos (se algo faltar, deduza do currícu
 - Diferenciais
 
 ## Estrutura da Resposta
+
 Sua resposta DEVE seguir esta estrutura, usando o layout do `assets/template_resposta.md`:
 
 1. Skills principais (Top Skills)
@@ -40,5 +45,6 @@ Sua resposta DEVE seguir esta estrutura, usando o layout do `assets/template_res
 4. Ferramentas e tecnologias
 
 ## Execução e Validação
+
 Utilize as referências de `references/` e caso necessário para garantir a formatação ou analisar dados em massa, os scripts em `scripts/`.
 Mantenha sua resposta principal concentrando-se apenas na entrega das habilidades no formato pedido.

@@ -28,6 +28,7 @@ function extractJsonFromText(text: string): string | null {
   return null; // JSON incompleto
 }
 
+// classe responsável por executar o loop ReAct e interagir com o LLM.
 export class AgentLoop {
   /**
    * Executa a iteração ReAct
@@ -47,6 +48,7 @@ export class AgentLoop {
     // Anexa a nova msg de usuário no banco
     MemoryManager.appendMessage(conversationId, 'user', userMessage);
 
+    // prompt do sistema responsável por instruir o LLM sobre como ele deve se comportar.
     const systemPrompt = `
 Quando iniciar a interação, você deve se apresentar como AdriClaw, um agente pessoal altamente eficiente.
 Você tem acesso a habilidades dinâmicas. O seu processo exige que você use "thought" (pensamento) para decidir e invocar "tools" (ferramentas) quando necessário, ou apenas responda o usuário final se você já tiver a resposta.
@@ -56,6 +58,7 @@ CONTEXTO DE HABILIDADE ATUAL (SKILL):
 ${skillContext || 'Nenhuma habilidade em especial. Reaja naturalmente ao usuário.'}
 `;
 
+    // loop responsável por executar a iteração ReAct.
     while (iterations < config.MAX_ITERATIONS) {
       iterations++;
       console.log(`[AgentLoop] Iniciando iteração ${iterations} para ${conversationId}...`);
@@ -69,9 +72,10 @@ ${skillContext || 'Nenhuma habilidade em especial. Reaja naturalmente ao usuári
         content: m.content
       }));
 
-      // Chamo a IA
+      // chama a IA para gerar uma resposta.
       let response = await provider.generate(systemPrompt, rawMessages, tools);
 
+      // verifica se houve erro no LLM.
       if (response.error) {
         console.error(`[AgentLoop] Erro no LLM (${config.DEFAULT_LLM_PROVIDER}): ${response.error}`);
         return `Erro interno no LLM: ${response.error}`;
@@ -104,6 +108,7 @@ ${skillContext || 'Nenhuma habilidade em especial. Reaja naturalmente ao usuári
             }
           }
 
+          // executa a tool e armazena o resultado em observation.
           const result = await tool.execute(args);
           observation = typeof result === 'string' ? result : JSON.stringify(result);
         } catch (error: any) {
@@ -120,6 +125,7 @@ ${skillContext || 'Nenhuma habilidade em especial. Reaja naturalmente ao usuári
       return "LLM respondeu algo vazio.";
     }
 
+    // lança um erro caso o loop atinja o número máximo de iterações.
     throw new Error("MAX_ITERATIONS atingido. O Agente não conseguiu concluir o pensamento.");
   }
 }

@@ -3,6 +3,7 @@ import { GeminiProvider } from './GeminiProvider';
 import { GroqProvider } from './GroqProvider';
 import { OpenRouterProvider } from './OpenRouterProvider';
 
+// classe responsável por retornar a instância do provider baseado no nome passado como parâmetro.
 export class ProviderFactory {
   public static getProvider(providerName: string): ILlmProvider {
     switch (providerName.toLowerCase()) {

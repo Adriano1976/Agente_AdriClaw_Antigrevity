@@ -2,6 +2,7 @@ import { ILlmProvider, LlmResponse, ToolCall } from './ILlmProvider';
 import { config } from '../config';
 import { Groq } from 'groq-sdk';
 
+// classe responsável por implementar a interface ILlmProvider
 export class GroqProvider implements ILlmProvider {
   private groq: Groq;
 

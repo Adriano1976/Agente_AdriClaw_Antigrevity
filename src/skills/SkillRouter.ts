@@ -2,13 +2,15 @@ import { ProviderFactory } from '../providers/ProviderFactory';
 import { SkillMetadata } from './SkillLoader';
 import { config } from '../config';
 
+// Classe responsável por rotear as skills para o LLM.
 export class SkillRouter {
   /**
-   * "Passo Zero" da rede neural. Usa LLM pra ver se precisa de alguma skill
+   * "Passo Zero" da rede neural. Usa LLM pra ver se precisa de alguma skill ou se é conversa fiada/geral.
    */
   public static async determineSkill(userIntent: string, availableSkills: SkillMetadata[]): Promise<string | null> {
     if (availableSkills.length === 0) return null;
 
+    // Pega o provider de LLM configurado no .env
     const provider = ProviderFactory.getProvider(config.DEFAULT_LLM_PROVIDER);
     const skillsDescriptions = availableSkills.map(s => `- ${s.name} (${s.id}): ${s.description}`).join('\n');
 
@@ -27,11 +29,11 @@ Obrigatório: Responda APENAS com um JSON simples no formato {"skillName": "id_d
 
       const raw = response.content.replace(/\`\`\`json/g, '').replace(/\`\`\`/g, '').trim();
       const parsed = JSON.parse(raw);
-      
       const found = availableSkills.find(s => s.id === parsed.skillName);
+      // Se não achar, retorna null.
       if (found) {
-         console.log(`[Router] Skill Casada: ${found.id}`);
-         return found.content; // Retorna o body completo da spec injetável
+        console.log(`[Router] Skill Casada: ${found.id}`);
+        return found.content;
       }
       return null;
     } catch (e) {

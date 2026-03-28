@@ -1,5 +1,6 @@
 import db from '../db/Database';
 
+// interface para que possamos trocar de banco de dados sem quebrar o código.
 export interface Message {
   id?: number;
   conversationId: string;
@@ -7,6 +8,7 @@ export interface Message {
   content: string;
 }
 
+// classe responsável por gerenciar as mensagens no banco de dados.
 export class MessageRepository {
   public static addMessage(conversationId: string, role: string, content: string): void {
     const stmt = db.prepare('INSERT INTO messages (conversation_id, role, content) VALUES (?, ?, ?)');

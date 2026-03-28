@@ -1,6 +1,7 @@
 import { ILlmProvider, LlmResponse, ToolCall } from './ILlmProvider';
 import { config } from '../config';
 
+// classe responsável por implementar a interface ILlmProvider
 export class OpenRouterProvider implements ILlmProvider {
   private apiKey: string;
   private baseUrl = 'https://openrouter.ai/api/v1';

@@ -1,5 +1,6 @@
 import 'dotenv/config';
 
+// arquivo de configuração responsável por carregar as variáveis de ambiente do arquivo .env
 export const config = {
   TELEGRAM_BOT_TOKEN: process.env.TELEGRAM_BOT_TOKEN || '',
   TELEGRAM_ALLOWED_USER_IDS: (process.env.TELEGRAM_ALLOWED_USER_IDS || '').split(',').map(id => id.trim()).filter(Boolean),

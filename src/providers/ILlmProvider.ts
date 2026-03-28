@@ -1,15 +1,18 @@
+// interface responsável por definir o formato da ferramenta
 export interface ToolCall {
   id: string;
   name: string;
   arguments: any;
 }
 
+// interface responsável por definir o formato da resposta do LLM
 export interface LlmResponse {
   content: string | null;
   toolCalls?: ToolCall[];
   error?: string;
 }
 
+// interface responsável por definir o formato da requisição do LLM
 export interface ILlmProvider {
   /**
    * Envia uma requisição de preenchimento (chat completion) pro LLM

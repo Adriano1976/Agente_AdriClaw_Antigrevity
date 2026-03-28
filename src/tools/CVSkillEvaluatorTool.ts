@@ -1,16 +1,12 @@
 import fs from 'fs';
-import path from 'path';
 import pdfParse from 'pdf-parse';
 import { BaseTool } from './BaseTool';
 
-/**
- * Ferramenta inspirada na skill 'legal-professional-CV'.
- * Permite ler um PDF de currículo e extrair/formatar as skills de forma otimizada.
- */
+// classe responsável por ler um arquivo PDF de currículo e extrair/formatar as skills de forma otimizada.
 export class CVSkillEvaluatorTool extends BaseTool {
   name = 'evaluate_cv_skills';
   description = 'Lê um arquivo PDF de currículo e gera uma seção de habilidades (Skills) otimizada para recrutadores (baseada na skill legal-cv-skill).';
-  
+
   parameters = {
     filePath: {
       type: 'string',
@@ -26,15 +22,17 @@ export class CVSkillEvaluatorTool extends BaseTool {
     }
   };
 
+  // método responsável por executar a ferramenta.
   public async execute(args: { filePath?: string, textReplica?: string, targetRole?: string }): Promise<any> {
     const { filePath, textReplica, targetRole } = args;
     let cvText = textReplica || '';
 
+    // verifica se o arquivo PDF foi fornecido.
     if (filePath && !cvText) {
       if (!fs.existsSync(filePath)) {
         return `Erro: Arquivo não encontrado em ${filePath}`;
       }
-      
+
       try {
         const dataBuffer = fs.readFileSync(filePath);
         // @ts-ignore - TS types mismatch for pdf-parse commonjs export

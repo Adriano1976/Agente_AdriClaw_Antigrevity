@@ -3,6 +3,7 @@ import { AgentLoop } from '../core/AgentLoop';
 import { SkillLoader } from '../skills/SkillLoader';
 import { SkillRouter } from '../skills/SkillRouter';
 
+// classe responsável por controlar o fluxo de mensagens do Telegram e interagir com o LLM.
 export class AgentController {
 
   public static async handleMessage(ctx: Context, userId: string, text: string, requiresAudio: boolean = false) {
@@ -33,6 +34,7 @@ export class AgentController {
     }
   }
 
+  // método responsável por enviar a resposta para o Telegram
   private static async sendReply(ctx: Context, text: string, requiresAudio: boolean = false) {
     // Caso seja áudio, faríamos a ponte com Edge-TTS aqui no futuro.
     if (requiresAudio) {
@@ -41,6 +43,7 @@ export class AgentController {
       text = `🎙️ Áudio gerado localmente:\n` + text;
     }
 
+    // remove caracteres especiais do texto para evitar problemas com o Telegram.
     const plainText = text.replace(/[#*`_~\[\]]/g, '');
     const MAX_LEN = 4000;
     if (plainText.length <= MAX_LEN) {

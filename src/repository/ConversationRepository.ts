@@ -6,6 +6,7 @@ export interface Conversation {
   provider: string;
 }
 
+// classe responsável por gerenciar as conversas
 export class ConversationRepository {
   public static create(id: string, userId: string, provider: string): void {
     const stmt = db.prepare('INSERT OR IGNORE INTO conversations (id, user_id, provider) VALUES (?, ?, ?)');

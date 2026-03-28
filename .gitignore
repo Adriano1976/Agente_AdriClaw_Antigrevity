@@ -4,14 +4,12 @@ tmp/
 data/
 .env
 
-# Logs
 logs
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# OS Files
 .DS_Store
 Thumbs.db
 README.md
